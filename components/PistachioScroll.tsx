@@ -48,11 +48,11 @@ export default function PistachioScroll() {
         offset: ['start start', 'end end'],
     });
 
-    // Smooth spring animation for buttery smoothness
+    // Lazier spring for a more weighted, intentional feel (especially for fast scrolls)
     const smoothProgress = useSpring(scrollYProgress, {
-        stiffness: 100,
-        damping: 30,
-        restDelta: 0.001,
+        stiffness: 40,
+        damping: 35,
+        restDelta: 0.0001,
     });
 
     // Preload all images
@@ -157,12 +157,13 @@ export default function PistachioScroll() {
             // Clamp the progress value to prevent any negative values or overshooting
             const clampedProgress = Math.max(0, Math.min(1, latest));
 
-            // Finish animation at 90% of visual scroll to allow a "hold" at the end
-            const ANIMATION_END_THRESHOLD = 0.9;
+            // Animation reaches 100% complete at 85% of the scroll journey
+            // This ensures a significant "hold" at the end of the animation
+            const ANIMATION_END_THRESHOLD = 0.85;
             const normalizedProgress = Math.min(1, clampedProgress / ANIMATION_END_THRESHOLD);
 
             const frameIndex = Math.min(
-                Math.max(0, Math.floor(normalizedProgress * FRAME_COUNT)),
+                Math.max(0, Math.floor(normalizedProgress * (FRAME_COUNT - 1))),
                 FRAME_COUNT - 1
             );
 
@@ -214,12 +215,12 @@ export default function PistachioScroll() {
     }
 
     return (
-        <div ref={containerRef} className="relative" style={{ height: '500vh' }}>
-            {/* Sticky Canvas */}
-            <div className="sticky top-0 h-screen w-full overflow-hidden">
+        <div ref={containerRef} className="relative" style={{ height: '800vh' }}>
+            {/* Sticky Canvas - using dvh to prevent mobile address bar jumping */}
+            <div className="sticky top-0 h-[100dvh] w-full overflow-hidden">
                 <canvas
                     ref={canvasRef}
-                    className="absolute inset-0"
+                    className="absolute inset-0 w-full h-full"
                     style={{ background: '#000000' }}
                 />
 
