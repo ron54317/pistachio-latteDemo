@@ -183,26 +183,6 @@ export default function PistachioScroll() {
     // Scroll indicator fade out
     const scrollIndicatorOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
 
-    // Create transforms for each text beat (must be done outside map to follow React hooks rules)
-    const textBeatAnimations = TEXT_BEATS.map((beat) => {
-        const [rangeStart, rangeEnd] = beat.range;
-        const fadeInEnd = rangeStart + 0.05;
-        const fadeOutStart = rangeEnd - 0.05;
-
-        return {
-            opacity: useTransform(
-                scrollYProgress,
-                [rangeStart, fadeInEnd, fadeOutStart, rangeEnd],
-                [0, 1, 1, 0]
-            ),
-            y: useTransform(
-                scrollYProgress,
-                [rangeStart, fadeInEnd, fadeOutStart, rangeEnd],
-                [20, 0, 0, -20]
-            ),
-        };
-    });
-
     if (isLoading) {
         return (
             <div className="fixed inset-0 bg-black flex flex-col items-center justify-center z-50">
@@ -239,37 +219,13 @@ export default function PistachioScroll() {
                 />
 
                 {/* Text Overlays */}
-                {TEXT_BEATS.map((beat, index) => {
-                    const { opacity, y } = textBeatAnimations[index];
-
-                    return (
-                        <motion.div
-                            key={index}
-                            style={{ opacity, y }}
-                            className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none"
-                        >
-                            <div className="max-w-5xl">
-                                <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-[-0.02em] mb-6 bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent drop-shadow-2xl">
-                                    {beat.title}
-                                </h2>
-                                <p className="text-xl md:text-2xl lg:text-3xl text-green-50/70 max-w-3xl mx-auto font-light leading-relaxed backdrop-blur-sm">
-                                    {beat.subtitle}
-                                </p>
-                            </div>
-
-                            {beat.cta && (
-                                <motion.button
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.3 }}
-                                    className="mt-10 px-10 py-5 bg-gradient-to-r from-white to-green-50 text-black font-bold tracking-[0.1em] text-sm rounded-full hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 pointer-events-auto hover:scale-105"
-                                >
-                                    {beat.cta}
-                                </motion.button>
-                            )}
-                        </motion.div>
-                    );
-                })}
+                {TEXT_BEATS.map((beat, index) => (
+                    <TextBeatOverlay
+                        key={index}
+                        beat={beat}
+                        scrollYProgress={scrollYProgress}
+                    />
+                ))}
 
                 {/* Scroll Indicator */}
                 <motion.div
@@ -289,5 +245,50 @@ export default function PistachioScroll() {
                 </motion.div>
             </div>
         </div>
+    );
+}
+
+function TextBeatOverlay({ beat, scrollYProgress }: { beat: TextBeat, scrollYProgress: any }) {
+    const [rangeStart, rangeEnd] = beat.range;
+    const fadeInEnd = rangeStart + 0.05;
+    const fadeOutStart = rangeEnd - 0.05;
+
+    const opacity = useTransform(
+        scrollYProgress,
+        [rangeStart, fadeInEnd, fadeOutStart, rangeEnd],
+        [0, 1, 1, 0]
+    );
+
+    const y = useTransform(
+        scrollYProgress,
+        [rangeStart, fadeInEnd, fadeOutStart, rangeEnd],
+        [20, 0, 0, -20]
+    );
+
+    return (
+        <motion.div
+            style={{ opacity, y }}
+            className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none"
+        >
+            <div className="max-w-5xl">
+                <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-[-0.02em] mb-6 bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent">
+                    {beat.title}
+                </h2>
+                <p className="text-xl md:text-2xl lg:text-3xl text-green-50/70 max-w-3xl mx-auto font-light leading-relaxed">
+                    {beat.subtitle}
+                </p>
+            </div>
+
+            {beat.cta && (
+                <motion.button
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="mt-10 px-10 py-5 bg-gradient-to-r from-white to-green-50 text-black font-bold tracking-[0.1em] text-sm rounded-full hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 pointer-events-auto hover:scale-105"
+                >
+                    {beat.cta}
+                </motion.button>
+            )}
+        </motion.div>
     );
 }

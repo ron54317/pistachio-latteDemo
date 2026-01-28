@@ -32,8 +32,8 @@ export default function ProductDetails() {
                     </h2>
                     <p className="text-xl md:text-2xl text-green-50/60 max-w-3xl mx-auto font-light leading-relaxed">
                         After months of perfecting it, this latte hits just the right balance of
-                        nutty pistachios, smooth coffee, and creamy oat milk. It's not just a
-                        drink—it's a moment.
+                        nutty pistachios, smooth coffee, and creamy oat milk. It&apos;s not just a
+                        drink—it&apos;s a moment.
                     </p>
                 </motion.div>
 
@@ -55,7 +55,7 @@ export default function ProductDetails() {
                         {
                             icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z",
                             title: "Creamy Oat Milk",
-                            description: "Made with barista-grade oat milk that's silky, rich, and completely dairy-free. Perfectly indulgent without compromise.",
+                            description: "Made with barista-grade oat milk that&apos;s silky, rich, and completely dairy-free. Perfectly indulgent without compromise.",
                             delay: 0.3
                         }
                     ].map((feature, index) => (
