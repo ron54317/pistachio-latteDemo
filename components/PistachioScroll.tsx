@@ -156,8 +156,13 @@ export default function PistachioScroll() {
         const unsubscribe = smoothProgress.on('change', (latest) => {
             // Clamp the progress value to prevent any negative values or overshooting
             const clampedProgress = Math.max(0, Math.min(1, latest));
+
+            // Finish animation at 90% of visual scroll to allow a "hold" at the end
+            const ANIMATION_END_THRESHOLD = 0.9;
+            const normalizedProgress = Math.min(1, clampedProgress / ANIMATION_END_THRESHOLD);
+
             const frameIndex = Math.min(
-                Math.max(0, Math.floor(clampedProgress * FRAME_COUNT)),
+                Math.max(0, Math.floor(normalizedProgress * FRAME_COUNT)),
                 FRAME_COUNT - 1
             );
 
@@ -209,7 +214,7 @@ export default function PistachioScroll() {
     }
 
     return (
-        <div ref={containerRef} className="relative" style={{ height: '400vh' }}>
+        <div ref={containerRef} className="relative" style={{ height: '500vh' }}>
             {/* Sticky Canvas */}
             <div className="sticky top-0 h-screen w-full overflow-hidden">
                 <canvas
@@ -271,10 +276,10 @@ function TextBeatOverlay({ beat, scrollYProgress }: { beat: TextBeat, scrollYPro
             className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none"
         >
             <div className="max-w-5xl">
-                <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-[-0.02em] mb-6 bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent">
+                <h2 className="text-4xl md:text-8xl lg:text-9xl font-bold tracking-[-0.02em] mb-4 md:mb-6 bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent">
                     {beat.title}
                 </h2>
-                <p className="text-xl md:text-2xl lg:text-3xl text-green-50/70 max-w-3xl mx-auto font-light leading-relaxed">
+                <p className="text-lg md:text-2xl lg:text-3xl text-green-50/70 max-w-3xl mx-auto font-light leading-relaxed">
                     {beat.subtitle}
                 </p>
             </div>
@@ -284,7 +289,7 @@ function TextBeatOverlay({ beat, scrollYProgress }: { beat: TextBeat, scrollYPro
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="mt-10 px-10 py-5 bg-gradient-to-r from-white to-green-50 text-black font-bold tracking-[0.1em] text-sm rounded-full hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 pointer-events-auto hover:scale-105"
+                    className="mt-8 md:mt-10 px-8 py-4 md:px-10 md:py-5 bg-gradient-to-r from-white to-green-50 text-black font-bold tracking-[0.1em] text-xs md:text-sm rounded-full hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 pointer-events-auto hover:scale-105"
                 >
                     {beat.cta}
                 </motion.button>
